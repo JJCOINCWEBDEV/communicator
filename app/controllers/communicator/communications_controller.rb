@@ -21,7 +21,7 @@ class Communicator::CommunicationsController < ActionController::Base
       observer_class_name.constantize.new.submit(params)
       respond_success
     end
-  end if Communicator.configuration.listener
+  end if Communicator.configuration.listeners
 
   private
 
