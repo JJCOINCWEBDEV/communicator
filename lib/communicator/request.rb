@@ -33,7 +33,7 @@ module Communicator
       end
 
       begin
-        response = Rails.env.in?(['development-', 'test']) ? nil : socket.start {|http| http.request(request)}
+        response = Rails.env.in?(['development', 'test']) ? nil : socket.start {|http| http.request(request)}
       rescue Errno::ECONNREFUSED
         response = nil
       end

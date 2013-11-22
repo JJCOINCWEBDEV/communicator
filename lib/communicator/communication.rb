@@ -20,6 +20,10 @@ module Communicator
       end if subscribers
     end
 
+    def fetch
+      # TODO
+    end
+
     private
 
     def subscribers

@@ -11,6 +11,10 @@ module Communicator
       request.post(:listen, event: event, id: id, data: data.to_json, model: model)
     end
 
+    def get_status(event, id, model = nil)
+      request.post(:fetch, event: event, id: id, model: model)
+    end
+
     def configure
       yield(configuration) if block_given?
       init_communications
