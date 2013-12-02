@@ -7,11 +7,16 @@ module Communicator
       @params = params.symbolize_keys
     end
 
-    def to_retranslate
-      params
+    def retranslate_params
+      on_retranslate || params
+    end
+
+    def on_retranslate
+      # TODO
     end
 
     def receive
+      # TODO
     end
   end
 end

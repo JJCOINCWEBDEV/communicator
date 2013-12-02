@@ -11,7 +11,7 @@ module Communicator
 
     def publish(options)
       dsl = configuration.events.try(:[], options.try(:[], 'channel'))
-      Communicator::PubSub.publish('common', options.merge(dsl: dsl).to_json)
+      Communicator::PubSub.publish('common', options.merge(dsl: dsl))
     end
 
     def subscribe(channels)
@@ -24,7 +24,7 @@ module Communicator
       Communicator::PubSub.subscribe 'common' do |channel, message|
         channel = message.delete('channel')
         message = Communicator::Message.new(channel, message)
-        Communicator::PubSub.publish(channel, message.to_retranslate)
+        Communicator::PubSub.publish(channel, message.retranslate_params)
         message.receive
       end
     end
