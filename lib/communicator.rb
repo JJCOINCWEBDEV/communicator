@@ -16,15 +16,16 @@ module Communicator
 
     def subscribe(channels)
       Communicator::PubSub.subscribe channels do |channel, message|
-        Communicator::Message.receive(channel, message)
+        Communicator::Message.new(channel, message).receive
       end if channels
     end
 
     def retranslate
       Communicator::PubSub.subscribe 'common' do |channel, message|
         channel = message.delete('channel')
-        message = Communicator::Message.on_retranslate(message)
-        Communicator::PubSub.publish(channel, message.to_json)
+        message = Communicator::Message.new(channel, message)
+        Communicator::PubSub.publish(channel, message.to_retranslate)
+        message.receive
       end
     end
 

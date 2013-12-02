@@ -1,14 +1,17 @@
 module Communicator
   class Message
-    attr_reader :channel, :params
+    attr_accessor :channel, :params
 
-    def self.on_retranslate(message)
-      message
+    def initialize(channel, params)
+      @channel = channel
+      @params = params.symbolize_keys
     end
 
-    def receive(channel, params)
-      @channel = channel
-      @params = params
+    def to_retranslate
+      params
+    end
+
+    def receive
     end
   end
 end
