@@ -1,5 +1,7 @@
 require 'communicator/configuration'
 require "communicator/engine"
+require 'communicator/pub_sub'
+require 'communicator/message'
 require 'communicator/request'
 require 'communicator/communication'
 require 'yaml'
@@ -7,8 +9,27 @@ require 'yaml'
 module Communicator
   class << self
 
+    def publish(options)
+      dsl = configuration.events.try(:[], options.try(:[], 'channel'))
+      Communicator::PubSub.publish('common', options.merge(dsl: dsl).to_json)
+    end
+
+    def subscribe(channels)
+      Communicator::PubSub.subscribe channels do |channel, message|
+        Communicator::Message.receive(channel, message)
+      end if channels
+    end
+
+    def retranslate
+      Communicator::PubSub.subscribe 'common' do |channel, message|
+        channel = message.delete('channel')
+        message = Communicator::Message.on_retranslate(message)
+        Communicator::PubSub.publish(channel, message.to_json)
+      end
+    end
+
     def emit_event(event, data, id, model = nil)
-      request.post(:listen, event: event, id: id, data: data.to_json, model: model)
+      publish({channel: event, id: id, data: data, model: model})
     end
 
     def get_status(event, id, model = nil)
@@ -32,8 +53,6 @@ module Communicator
 
     def init_communications
       mount_routes
-      register_events configuration.events
-      bind_listeners configuration.listeners
       true
     end
 
@@ -42,18 +61,5 @@ module Communicator
         mount Communicator::Engine, :at => '/communications'
       end
     end
-
-    def register_events(events)
-      events.each do |event, dsl|
-        request.post(:register, event: event, dsl: dsl.to_json)
-      end if events
-    end
-
-    def bind_listeners(listeners)
-      listeners.keys.each do |event|
-        request.post(:subscribe, event: event, url: "http://#{configuration.domain}/communications/listen/#{event}")
-      end if listeners
-    end
-
   end
 end

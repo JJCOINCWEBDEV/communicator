@@ -14,24 +14,8 @@ module Communicator
       # TODO
     end
 
-    def receive
-      subscribers.each do |subscriber|
-        submit_event(subscriber.url)
-      end if subscribers
-    end
-
     def fetch
       # TODO
-    end
-
-    private
-
-    def subscribers
-      # TODO
-    end
-
-    def submit_event(url)
-      Communicator::Request.new.send(url, params.slice(:event, :id, :data, :project))
     end
   end
 end

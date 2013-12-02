@@ -1,6 +1,6 @@
 module Communicator
   class Configuration
-    attr_accessor :server, :role, :secret_key, :ssl, :domain, :project, :events, :listeners
+    attr_accessor :server, :role, :secret_key, :ssl, :domain, :project, :events, :listeners, :redis
 
     def initialize(options = {})
       set_options(options)

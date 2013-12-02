@@ -1,5 +1,5 @@
 class Communicator::CommunicationsController < ActionController::Base
-  before_filter :check_authorization!, :event, only: [:register, :subscribe, :listen, :fetch]
+  before_filter :check_authorization!, :communication, only: [:register, :subscribe, :fetch]
 
   def register
     @communication.register
@@ -11,21 +11,9 @@ class Communicator::CommunicationsController < ActionController::Base
     respond_success
   end
 
-  def listen
-    @communication.receive
-    respond_success
-  end
-
   def fetch
-    render json: @communication.fetch.to_json
+    render json: @communication.fetch
   end
-
-  Communicator.configuration.listeners.each do |event, observer_class_name|
-    define_method "listen_#{event}" do
-      observer_class_name.constantize.new.submit(params)
-      respond_success
-    end
-  end if Communicator.configuration.listeners
 
   private
 
@@ -35,7 +23,7 @@ class Communicator::CommunicationsController < ActionController::Base
     end
   end
 
-  def event
+  def communication
     @communication ||= Communicator::Communication.new(params)
   end
 

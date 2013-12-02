@@ -14,10 +14,6 @@ module Communicator
       @response = request(['http://' + config.server, 'communications', method].join('/'), options.merge(project: config.project))
     end
 
-    def send(url, options)
-      @response = request(url, options)
-    end
-
     private
 
     def request(url, params, options = {})
