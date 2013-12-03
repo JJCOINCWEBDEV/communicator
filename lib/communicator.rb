@@ -16,9 +16,9 @@ module Communicator
     end
 
     def retranslate
-      Communicator::PubSub.subscribe 'common' do |common_channel, attrs|
-        channel = attrs.delete(:channel)
-        params = attrs.delete(:message)
+      Communicator::PubSub.subscribe 'common' do |common, attrs|
+        channel = attrs.delete('channel') || attrs.delete(:channel)
+        params = attrs.delete('message') || attrs.delete(:message)
         message = Communicator::Message.new(channel, params)
         Communicator::PubSub.publish(channel, message.retranslate_params)
         message.receive
