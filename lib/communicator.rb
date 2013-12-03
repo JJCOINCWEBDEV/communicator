@@ -26,7 +26,7 @@ module Communicator
     end
 
     def emit_event(event, data, id, model = nil)
-      dsl = configuration.events.try(:[], event.to_s))
+      dsl = configuration.events.try(:[], event.to_s)
       publish(event, {id: id, data: data, model: model, dsl: dsl})
     end
 
