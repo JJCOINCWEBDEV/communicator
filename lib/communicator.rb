@@ -1,10 +1,6 @@
 require 'communicator/configuration'
-require "communicator/engine"
 require 'communicator/pub_sub'
 require 'communicator/message'
-require 'communicator/request'
-require 'communicator/communication'
-require 'yaml'
 
 module Communicator
   class << self
@@ -33,34 +29,12 @@ module Communicator
       publish({channel: event, id: id, data: data, model: model})
     end
 
-    def get_status(event, id, model = nil)
-      request.post(:fetch, event: event, id: id, model: model)
-    end
-
     def configure
       yield(configuration) if block_given?
-      init_communications
     end
 
     def configuration
       @configuration ||=  Communicator::Configuration.new
-    end
-
-    private
-
-    def request
-      @request ||=  Communicator::Request.new
-    end
-
-    def init_communications
-      mount_routes
-      true
-    end
-
-    def mount_routes
-      Rails.application.routes.prepend do
-        mount Communicator::Engine, :at => '/communications'
-      end
     end
   end
 end

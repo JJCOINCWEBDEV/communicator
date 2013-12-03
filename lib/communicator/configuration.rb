@@ -1,6 +1,8 @@
+require 'yaml'
+
 module Communicator
   class Configuration
-    attr_accessor :server, :role, :secret_key, :ssl, :domain, :project, :events, :listeners, :redis
+    attr_accessor :server, :role, :secret_key, :project, :events, :listeners, :redis, :logger
 
     def initialize(options = {})
       set_options(options)
@@ -18,11 +20,11 @@ module Communicator
 
     def configure_with_yaml(yaml_file_path)
       begin
-        config = YAML.load_file(File.join(Rails.root, yaml_file_path))
+        config = YAML.load_file(yaml_file_path)
       rescue Errno::ENOENT
-        Rails.logger.error("YAML configuration file couldn't be found. Using defaults."); return
+        logger && logger.error("YAML configuration file couldn't be found. Using defaults."); return
       rescue Psych::SyntaxError
-        Rails.logger.error("YAML configuration file contains invalid syntax. Using defaults."); return
+        logger && logger.error("YAML configuration file contains invalid syntax. Using defaults."); return
       end
       config || {}
     end
