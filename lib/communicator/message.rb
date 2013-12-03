@@ -4,7 +4,7 @@ module Communicator
 
     def initialize(channel, params)
       @channel = channel
-      @params = params.symbolize_keys
+      @params = params
     end
 
     def retranslate_params
